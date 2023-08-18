@@ -1,6 +1,10 @@
 ﻿#include <iostream>
+#include <TriMesh.h>
+#include <PoissonReconLib.h>
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	std::shared_ptr<trimesh::TriMesh> result = triangulation();
+	result->write("D:\\result.ply");
+	system("pause");
 }

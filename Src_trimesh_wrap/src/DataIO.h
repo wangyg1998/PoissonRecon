@@ -1,7 +1,7 @@
 #pragma once
 
 #include "VertexStream.h"
-#include "TriMesh.h"
+#include <TriMesh.h>
 
 #ifdef USE_DOUBLE
 typedef double Real;

@@ -70,6 +70,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(NEW_CORE_LIBRARY)\Lib\$(Configuration).$(Platform)\</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -131,7 +134,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>..;..\Src;$(NEW_CORE_LIBRARY)\Include\TriMesh2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\Src;.\include;.\src;$(NEW_CORE_LIBRARY)\Include\TriMesh2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -141,6 +144,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy .\include\PoissonReconLib.h $(NEW_CORE_LIBRARY)\Include\PoissonReconLib\  /s /d /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\Allocator.h" />
@@ -181,12 +187,8 @@
     <ClInclude Include="..\Src\VertexFactory.h" />
     <ClInclude Include="..\Src\VertexStream.h" />
     <ClInclude Include="..\Src\Window.h" />
-    <ClInclude Include="DataIO.h" />
-    <ClInclude Include="PoissonReconLib.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="PoissonRecon.cpp" />
-    <ClCompile Include="PoissonReconLib.cpp" />
+    <ClInclude Include="include\PoissonReconLib.h" />
+    <ClInclude Include="src\DataIO.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Src\Array.inl" />
@@ -227,6 +229,9 @@
     <None Include="..\Src\VertexFactory.inl" />
     <None Include="..\Src\VertexStream.inl" />
     <None Include="..\Src\Window.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\PoissonRecon.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

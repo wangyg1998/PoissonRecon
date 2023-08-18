@@ -21,9 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PoissonReconLib.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\Src\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -138,17 +135,12 @@
     <ClInclude Include="..\Src\Array.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DataIO.h">
+    <ClInclude Include="include\PoissonReconLib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DataIO.h">
       <Filter>源文件</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="PoissonReconLib.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="PoissonRecon.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Src\Window.inl">
@@ -265,5 +257,10 @@
     <None Include="..\Src\BMPStream.inl">
       <Filter>Inline Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\PoissonRecon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
