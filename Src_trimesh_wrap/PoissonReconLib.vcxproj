@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{460b7fe4-d990-452c-919e-cd7b1ffe8da7}</ProjectGuid>
+    <RootNamespace>PoissonReconLib</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_LIB;WIN32;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
+      <AdditionalIncludeDirectories>..;..\Src;$(NEW_CORE_LIBRARY)\Include\TriMesh2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Src\Allocator.h" />
+    <ClInclude Include="..\Src\Array.h" />
+    <ClInclude Include="..\Src\BinaryNode.h" />
+    <ClInclude Include="..\Src\BlockedVector.h" />
+    <ClInclude Include="..\Src\BSplineData.h" />
+    <ClInclude Include="..\Src\CmdLineParser.h" />
+    <ClInclude Include="..\Src\Factor.h" />
+    <ClInclude Include="..\Src\FEMTree.h" />
+    <ClInclude Include="..\Src\FunctionData.h" />
+    <ClInclude Include="..\Src\Geometry.h" />
+    <ClInclude Include="..\Src\Image.h" />
+    <ClInclude Include="..\Src\JPEG.h" />
+    <ClInclude Include="..\Src\LinearSolvers.h" />
+    <ClInclude Include="..\Src\MarchingCubes.h" />
+    <ClInclude Include="..\Src\MAT.h" />
+    <ClInclude Include="..\Src\MergePlyClientServer.h" />
+    <ClInclude Include="..\Src\MyMiscellany.h" />
+    <ClInclude Include="..\Src\Ply.h" />
+    <ClInclude Include="..\Src\PlyFile.h" />
+    <ClInclude Include="..\Src\PNG.h" />
+    <ClInclude Include="..\Src\PointPartition.h" />
+    <ClInclude Include="..\Src\PointPartitionClientServer.h" />
+    <ClInclude Include="..\Src\PoissonRecon.h" />
+    <ClInclude Include="..\Src\PoissonReconClientServer.h" />
+    <ClInclude Include="..\Src\Polynomial.h" />
+    <ClInclude Include="..\Src\PPolynomial.h" />
+    <ClInclude Include="..\Src\PreProcessor.h" />
+    <ClInclude Include="..\Src\Rasterizer.h" />
+    <ClInclude Include="..\Src\RegularGrid.h" />
+    <ClInclude Include="..\Src\RegularTree.h" />
+    <ClInclude Include="..\Src\Socket.h" />
+    <ClInclude Include="..\Src\SparseMatrix.h" />
+    <ClInclude Include="..\Src\SparseMatrixInterface.h" />
+    <ClInclude Include="..\Src\StreamingMesh.h" />
+    <ClInclude Include="..\Src\Streams.h" />
+    <ClInclude Include="..\Src\VertexFactory.h" />
+    <ClInclude Include="..\Src\VertexStream.h" />
+    <ClInclude Include="..\Src\Window.h" />
+    <ClInclude Include="DataIO.h" />
+    <ClInclude Include="PoissonReconLib.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="PoissonRecon.cpp" />
+    <ClCompile Include="PoissonReconLib.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Src\Array.inl" />
+    <None Include="..\Src\BMPStream.inl" />
+    <None Include="..\Src\BSplineData.inl" />
+    <None Include="..\Src\CmdLineParser.inl" />
+    <None Include="..\Src\FEMTree.Evaluation.inl" />
+    <None Include="..\Src\FEMTree.Initialize.inl" />
+    <None Include="..\Src\FEMTree.inl" />
+    <None Include="..\Src\FEMTree.LevelSet.2D.inl" />
+    <None Include="..\Src\FEMTree.LevelSet.3D.inl" />
+    <None Include="..\Src\FEMTree.LevelSet.inl" />
+    <None Include="..\Src\FEMTree.SortedTreeNodes.inl" />
+    <None Include="..\Src\FEMTree.System.inl" />
+    <None Include="..\Src\FEMTree.WeightedSamples.inl" />
+    <None Include="..\Src\FunctionData.inl" />
+    <None Include="..\Src\Geometry.inl" />
+    <None Include="..\Src\JPEG.inl" />
+    <None Include="..\Src\MAT.inl" />
+    <None Include="..\Src\MergePlyClientServer.inl" />
+    <None Include="..\Src\Ply.inl" />
+    <None Include="..\Src\PlyFile.inl" />
+    <None Include="..\Src\PNG.inl" />
+    <None Include="..\Src\PointPartition.inl" />
+    <None Include="..\Src\PointPartitionClientServer.inl" />
+    <None Include="..\Src\PoissonRecon.client.inl" />
+    <None Include="..\Src\PoissonRecon.server.inl" />
+    <None Include="..\Src\PoissonReconClientServer.inl" />
+    <None Include="..\Src\Polynomial.inl" />
+    <None Include="..\Src\PPolynomial.inl" />
+    <None Include="..\Src\Rasterizer.inl" />
+    <None Include="..\Src\RegularGrid.inl" />
+    <None Include="..\Src\RegularTree.inl" />
+    <None Include="..\Src\Socket.inl" />
+    <None Include="..\Src\SparseMatrix.inl" />
+    <None Include="..\Src\SparseMatrixInterface.inl" />
+    <None Include="..\Src\StreamingMesh.inl" />
+    <None Include="..\Src\VertexFactory.inl" />
+    <None Include="..\Src\VertexStream.inl" />
+    <None Include="..\Src\Window.inl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

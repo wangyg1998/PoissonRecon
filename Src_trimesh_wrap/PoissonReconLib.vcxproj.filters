@@ -1,0 +1,269 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{69ac74f1-1aea-461f-899c-57805d03add4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Inline Files">
+      <UniqueIdentifier>{a00940e9-1e7a-4d09-a928-6126fc007fec}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PoissonReconLib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VertexFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VertexStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Streams.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\SparseMatrixInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\StreamingMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Socket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\SparseMatrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\RegularTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Rasterizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\RegularGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Polynomial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\PreProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\PoissonReconClientServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\PoissonRecon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\PointPartition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\PointPartitionClientServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\PlyFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Ply.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\PPolynomial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\MyMiscellany.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\PNG.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\MarchingCubes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\MergePlyClientServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\MAT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\JPEG.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\LinearSolvers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Geometry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Factor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\FunctionData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\FEMTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\BlockedVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\CmdLineParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\BinaryNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\BSplineData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Array.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataIO.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="PoissonReconLib.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PoissonRecon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Src\Window.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\VertexFactory.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\VertexStream.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\StreamingMesh.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\SparseMatrix.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\SparseMatrixInterface.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\Socket.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\RegularTree.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\Rasterizer.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\RegularGrid.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\Polynomial.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\PoissonReconClientServer.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\PoissonRecon.server.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\PointPartitionClientServer.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\PoissonRecon.client.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\PointPartition.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\PlyFile.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\Ply.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\PPolynomial.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\PNG.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\MergePlyClientServer.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\MAT.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\JPEG.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\Geometry.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\FunctionData.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\FEMTree.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\FEMTree.System.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\FEMTree.WeightedSamples.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\FEMTree.SortedTreeNodes.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\FEMTree.LevelSet.3D.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\FEMTree.LevelSet.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\FEMTree.Initialize.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\FEMTree.LevelSet.2D.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\FEMTree.Evaluation.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\CmdLineParser.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\BSplineData.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\Array.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+    <None Include="..\Src\BMPStream.inl">
+      <Filter>Inline Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>
