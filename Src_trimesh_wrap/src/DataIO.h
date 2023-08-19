@@ -29,27 +29,24 @@ public:
 			return false;
 		}
 
+		Point<Real, 3>& p = d.get<0>();
+		Point<Real, 3>& n = d.get<1>().get<0>();
+		for (int i = 0; i < 3; ++i)
+		{
+			p[i] = mesh_->vertices[currentIndex_][i];
+			n[i] = mesh_->normals[currentIndex_][i];
+		}
 		if (hasColor_)
 		{
-			Point<Real, 3>& p = d.get<0>();
-			Point<Real, 3>& n = d.get<1>().get<0>();
-			Point<Real, 3>& c = d.get<1>().get<1>();
-			for (int i = 0; i < 3; ++i)
-			{
-				p[i] = mesh_->vertices[currentIndex_][i];
-				n[i] = mesh_->normals[currentIndex_][i];
-				c[i] = mesh_->colors[currentIndex_][i] * 255.f;
-			}
-		}
-		else
-		{
-			Point<Real, 3>& p = d.get<0>();
-			Point<Real, 3>& n = d.get<1>().get<0>();
-			for (int i = 0; i < 3; ++i)
-			{
-				p[i] = mesh_->vertices[currentIndex_][i];
-				n[i] = mesh_->normals[currentIndex_][i];
-			}
+			/*Point<Real, 3>& c = d.get<1>().get<1>();
+			c[0] = mesh_->colors[currentIndex_][0];
+			c[1] = mesh_->colors[currentIndex_][1];
+			c[2] = mesh_->colors[currentIndex_][2];*/
+			Real* ptr = (Real*)&d;
+			ptr[0] = mesh_->colors[currentIndex_][0];
+			ptr[1] = mesh_->colors[currentIndex_][1];
+			ptr[2] = mesh_->colors[currentIndex_][2];
+			
 		}
 
 		currentIndex_ += 1;

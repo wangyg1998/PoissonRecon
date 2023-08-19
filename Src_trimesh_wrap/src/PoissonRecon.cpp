@@ -305,7 +305,7 @@ void ExtractMesh
 	auto xForm = [&](typename VertexFactory::VertexType& v) { unitCubeToModelTransform.inPlace(v); };
 
 
-	if (true)
+	//输出为trimesh
 	{
 		outMesh.reset(new trimesh::TriMesh);
 		size_t nv = mesh->vertexNum();
@@ -319,6 +319,7 @@ void ExtractMesh
 			outMesh->colors.reserve(nv);
 		}
 
+		//顶点
 		const auto& vFactory = vertexFactory;
 		for (size_t i = 0; i < nv; i++)
 		{
@@ -327,8 +328,14 @@ void ExtractMesh
 			xForm(vertex);
 			Point<Real, 3>& p = vertex.get<0>();
 			outMesh->vertices.push_back(trimesh::point(p[0], p[1], p[2]));
+			if (hasColor)
+			{
+				Real* ptr = (Real*)&vertex;
+				outMesh->colors.push_back(trimesh::Color(ptr[0], ptr[1], ptr[2]));
+			}
 		}
 
+		//面片
 		std::vector< int > polygon;
 		for (size_t i = 0; i < nf; i++)
 		{
@@ -336,7 +343,6 @@ void ExtractMesh
 			outMesh->faces.push_back(trimesh::TriMesh::Face(polygon[0], polygon[1], polygon[2]));
 		}
 	}
-	//PLY::WritePolygons< VertexFactory , node_index_type , Real , Dim >( Out.value , vertexFactory , mesh , ASCII.set ? PLY_ASCII : PLY_BINARY_NATIVE , NoComments.set ? noComments : comments , xForm );
 	delete mesh;
 }
 
@@ -718,9 +724,9 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 									node->nodeData.setScratchFlag(false);
 								};
 								baseNodes[i]->processNodes(nodeFunctor);
-							} );
+								});
 						for (int i = 0; i < _vectorFieldElements.size(); i++) vectorFieldElements.insert(vectorFieldElements.end(), _vectorFieldElements[i].begin(), _vectorFieldElements[i].end());
-					}
+						}
 
 					// Set the scratch flag for the base nodes on which the vector field is supported
 #ifdef SHOW_WARNINGS
@@ -734,10 +740,10 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 					// Adjust the coarser node designators in case exterior nodes have become boundary.
 					ThreadPool::Parallel_for(0, baseNodes.size(), [&](unsigned int, size_t  i) { FEMTreeInitializer< Dim, Real >::PullGeometryNodeDesignatorsFromFiner(baseNodes[i], geometryNodeDesignators); });
 					FEMTreeInitializer< Dim, Real >::PullGeometryNodeDesignatorsFromFiner(&tree.spaceRoot(), geometryNodeDesignators, BaseDepth.value);
+					}
 				}
-			}
 			if (Verbose.set) std::cout << "#               Initialized envelope constraints: " << profiler << std::endl;
-		}
+			}
 
 		if (!Density.set) delete density, density = NULL;
 		if (!needNormalData && !needAuxData) delete sampleData, sampleData = NULL;
@@ -785,7 +791,7 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 							else if (geometryNodeDesignators[n] == GeometryNodeType::EXTERIOR) coefficients[n] = (Real)-1.;
 #endif
 						}
-					};
+			};
 					tree.spaceRoot().processNodes(nodeFunctor);
 					Pointer(Real) values = tree.template regularGridEvaluate< true >(coefficients, res, -1, false);
 					XForm< Real, Dim + 1 > voxelToUnitCube = XForm< Real, Dim + 1 >::Identity();
@@ -793,7 +799,7 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 
 					WriteGrid< Real, DEFAULT_DIMENSION >(EnvelopeGrid.value, values, res, unitCubeToModel * voxelToUnitCube, Verbose.set);
 					DeletePointer(values);
-				};
+		};
 
 				WriteEnvelopeGrid(true);
 		}
@@ -1038,20 +1044,21 @@ std::shared_ptr<trimesh::TriMesh> triangulation()
 
 	if (!PointWeight.set) PointWeight.value = DefaultPointWeightMultiplier * Degree.value;
 
-	//读入数据
-	Depth.set = true;
-	Depth.value = 9;
-	Out.set = true;
+	//执行
 	inCloud.reset(trimesh::TriMesh::read("D:\\input.ply"));
-	Execute< DEFAULT_DIMENSION, Real >(VertexFactory::RGBColorFactory< Real >());
-	/*if (inCloud->colors.size() == inCloud->vertices.size())
 	{
-		Execute< DEFAULT_DIMENSION, Real >(VertexFactory::RGBColorFactory< Real >());
+		Depth.set = true;
+		Depth.value = 9;
+		Out.set = true;
+		if (inCloud->colors.size() == inCloud->vertices.size())
+		{
+			Execute< DEFAULT_DIMENSION, Real >(VertexFactory::RGBColorFactory< Real >());
+		}
+		else
+		{
+			Execute< DEFAULT_DIMENSION, Real >(VertexFactory::EmptyFactory< Real >());
+		}
 	}
-	else
-	{
-		Execute< DEFAULT_DIMENSION, Real >(VertexFactory::EmptyFactory< Real >());
-	}*/
 
 	if (Performance.set)
 	{
