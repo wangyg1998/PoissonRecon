@@ -1022,7 +1022,7 @@ namespace PoissonReconLib
 			inCloud->colors.clear();
 		}
 
-		//调整包围盒大小
+		//调整包围盒比例
 		trimesh::point minPt(FLT_MAX), maxPt(-FLT_MAX);
 		for (int i = 0; i < inCloud->vertices.size(); ++i)
 		{
@@ -1039,25 +1039,9 @@ namespace PoissonReconLib
 		{
 			depth += 1;
 		}
-		float scale = ((targetEdgeLength * std::pow(2.f, depth)) - boxMaxEdgeLength - 1.f) / boxMaxEdgeLength;
-		if (scale > 0.f)
-		{
-			float extend = trimesh::length(maxPt - minPt) * scale * 0.5f;
-			trimesh::point extendDir = trimesh::normalized(maxPt - minPt);
-			minPt -= extendDir * extend;
-			maxPt += extendDir * extend;
-			inCloud->vertices.push_back(minPt);
-			inCloud->vertices.push_back(maxPt);
-			inCloud->normals.resize(inCloud->vertices.size(), trimesh::point(0.f, 0.f, 1.f));
-			if (!inCloud->colors.empty())
-			{
-				inCloud->colors.resize(inCloud->vertices.size(), trimesh::Color(0.f));
-			}
-		}
-		Out.set = true;
+		Scale.value = (targetEdgeLength * std::pow(2.f, depth)) / boxMaxEdgeLength;
 		Depth.value = depth;
-		std::cout << "Depth.value: " << depth << std::endl;
-		std::cout << "Box size: "<<(targetEdgeLength * std::pow(2.f, depth)) << ", " << (maxPt - minPt).max() << std::endl;
+		Out.set = true;
 
 		Timer timer;
 #ifdef ARRAY_DEBUG
