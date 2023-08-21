@@ -724,9 +724,9 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 									node->nodeData.setScratchFlag(false);
 								};
 								baseNodes[i]->processNodes(nodeFunctor);
-								});
+							});
 						for (int i = 0; i < _vectorFieldElements.size(); i++) vectorFieldElements.insert(vectorFieldElements.end(), _vectorFieldElements[i].begin(), _vectorFieldElements[i].end());
-						}
+					}
 
 					// Set the scratch flag for the base nodes on which the vector field is supported
 #ifdef SHOW_WARNINGS
@@ -740,10 +740,10 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 					// Adjust the coarser node designators in case exterior nodes have become boundary.
 					ThreadPool::Parallel_for(0, baseNodes.size(), [&](unsigned int, size_t  i) { FEMTreeInitializer< Dim, Real >::PullGeometryNodeDesignatorsFromFiner(baseNodes[i], geometryNodeDesignators); });
 					FEMTreeInitializer< Dim, Real >::PullGeometryNodeDesignatorsFromFiner(&tree.spaceRoot(), geometryNodeDesignators, BaseDepth.value);
-					}
 				}
-			if (Verbose.set) std::cout << "#               Initialized envelope constraints: " << profiler << std::endl;
 			}
+			if (Verbose.set) std::cout << "#               Initialized envelope constraints: " << profiler << std::endl;
+		}
 
 		if (!Density.set) delete density, density = NULL;
 		if (!needNormalData && !needAuxData) delete sampleData, sampleData = NULL;
@@ -791,7 +791,7 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 							else if (geometryNodeDesignators[n] == GeometryNodeType::EXTERIOR) coefficients[n] = (Real)-1.;
 #endif
 						}
-			};
+					};
 					tree.spaceRoot().processNodes(nodeFunctor);
 					Pointer(Real) values = tree.template regularGridEvaluate< true >(coefficients, res, -1, false);
 					XForm< Real, Dim + 1 > voxelToUnitCube = XForm< Real, Dim + 1 >::Identity();
@@ -799,13 +799,13 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 
 					WriteGrid< Real, DEFAULT_DIMENSION >(EnvelopeGrid.value, values, res, unitCubeToModel * voxelToUnitCube, Verbose.set);
 					DeletePointer(values);
-		};
+				};
 
 				WriteEnvelopeGrid(true);
-		}
+			}
 
 			if (Verbose.set) std::cout << "#       Finalized tree: " << profiler << std::endl;
-	}
+		}
 
 		// Add the FEM constraints
 		{
@@ -854,7 +854,7 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 			if (Verbose.set) std::cout << "# Linear system solved: " << profiler << std::endl;
 			if (iInfo) delete iInfo, iInfo = NULL;
 		}
-}
+	}
 
 	{
 		profiler.reset();
@@ -999,73 +999,129 @@ void Execute(const AuxDataFactory& auxDataFactory)
 }
 #endif // !FAST_COMPILE
 
-std::shared_ptr<trimesh::TriMesh> triangulation()
+
+namespace PoissonReconLib
 {
-	Timer timer;
-#ifdef ARRAY_DEBUG
-	WARN("Array debugging enabled");
-#endif // ARRAY_DEBUG
-	if (MaxMemoryGB.value > 0) SetPeakMemoryMB(MaxMemoryGB.value << 10);
-	ThreadPool::DefaultChunkSize = ThreadChunkSize.value;
-	ThreadPool::DefaultSchedule = (ThreadPool::ScheduleType)ScheduleType.value;
-	ThreadPool::Init((ThreadPool::ParallelType)ParallelType.value, Threads.value);
+	std::shared_ptr<trimesh::TriMesh> triangulation(std::vector<std::shared_ptr<trimesh::TriMesh>> meshList, float targetEdgeLength)
+	{
+		trimesh::TriMesh::set_verbose(0);
+		clock_t time = clock();
 
-	if (!BaseDepth.set) BaseDepth.value = FullDepth.value;
-	if (!SolveDepth.set) SolveDepth.value = Depth.value;
+		//单帧数据合并
+		inCloud.reset(new trimesh::TriMesh);
+		for (int k = 0; k < meshList.size(); ++k)
+		{
+			trimesh::TriMesh* mesh = meshList[k].get();
+			mesh->need_normals();
+			inCloud->vertices.insert(inCloud->vertices.end(), mesh->vertices.begin(), mesh->vertices.end());
+			inCloud->normals.insert(inCloud->normals.end(), mesh->normals.begin(), mesh->normals.end());
+			inCloud->colors.insert(inCloud->colors.end(), mesh->colors.begin(), mesh->colors.end());
+		}
+		if (inCloud->colors.size() != inCloud->vertices.size())
+		{
+			inCloud->colors.clear();
+		}
 
-	if (BaseDepth.value > FullDepth.value)
-	{
-		if (BaseDepth.set) WARN("Base depth must be smaller than full depth: ", BaseDepth.value, " <= ", FullDepth.value);
-		BaseDepth.value = FullDepth.value;
-	}
-	if (SolveDepth.value > Depth.value)
-	{
-		WARN("Solution depth cannot exceed system depth: ", SolveDepth.value, " <= ", Depth.value);
-		SolveDepth.value = Depth.value;
-	}
-	if (!KernelDepth.set) KernelDepth.value = Depth.value - 2;
-	if (KernelDepth.value > Depth.value)
-	{
-		WARN("Kernel depth should not exceed depth: ", KernelDepth.name, " <= ", KernelDepth.value);
-		KernelDepth.value = Depth.value;
-	}
-
-	if (!EnvelopeDepth.set) EnvelopeDepth.value = BaseDepth.value;
-	if (EnvelopeDepth.value > Depth.value)
-	{
-		WARN(EnvelopeDepth.name, " can't be greater than ", Depth.name, ": ", EnvelopeDepth.value, " <= ", Depth.value);
-		EnvelopeDepth.value = Depth.value;
-	}
-	if (EnvelopeDepth.value < BaseDepth.value)
-	{
-		WARN(EnvelopeDepth.name, " can't be less than ", BaseDepth.name, ": ", EnvelopeDepth.value, " >= ", BaseDepth.value);
-		EnvelopeDepth.value = BaseDepth.value;
-	}
-
-	if (!PointWeight.set) PointWeight.value = DefaultPointWeightMultiplier * Degree.value;
-
-	//执行
-	inCloud.reset(trimesh::TriMesh::read("D:\\input.ply"));
-	{
-		Depth.set = true;
-		Depth.value = 9;
+		//调整包围盒大小
+		trimesh::point minPt(FLT_MAX), maxPt(-FLT_MAX);
+		for (int i = 0; i < inCloud->vertices.size(); ++i)
+		{
+			const auto& p = inCloud->vertices[i];
+			for (int j = 0; j < 3; ++j)
+			{
+				minPt[j] = std::min(minPt[j], p[j]);
+				maxPt[j] = std::max(maxPt[j], p[j]);
+			}
+		}
+		float boxMaxEdgeLength = (maxPt - minPt).max();
+		int depth = 6;
+		while ((targetEdgeLength * std::pow(2.f, depth)) < boxMaxEdgeLength)
+		{
+			depth += 1;
+		}
+		float scale = ((targetEdgeLength * std::pow(2.f, depth)) - boxMaxEdgeLength - 1.f) / boxMaxEdgeLength;
+		if (scale > 0.f)
+		{
+			float extend = trimesh::length(maxPt - minPt) * scale * 0.5f;
+			trimesh::point extendDir = trimesh::normalized(maxPt - minPt);
+			minPt -= extendDir * extend;
+			maxPt += extendDir * extend;
+			inCloud->vertices.push_back(minPt);
+			inCloud->vertices.push_back(maxPt);
+			inCloud->normals.resize(inCloud->vertices.size(), trimesh::point(0.f, 0.f, 1.f));
+			if (!inCloud->colors.empty())
+			{
+				inCloud->colors.resize(inCloud->vertices.size(), trimesh::Color(0.f));
+			}
+		}
 		Out.set = true;
-		if (inCloud->colors.size() == inCloud->vertices.size())
-		{
-			Execute< DEFAULT_DIMENSION, Real >(VertexFactory::RGBColorFactory< Real >());
-		}
-		else
-		{
-			Execute< DEFAULT_DIMENSION, Real >(VertexFactory::EmptyFactory< Real >());
-		}
-	}
+		Depth.value = depth;
+		std::cout << "Depth.value: " << depth << std::endl;
+		std::cout << "Box size: "<<(targetEdgeLength * std::pow(2.f, depth)) << ", " << (maxPt - minPt).max() << std::endl;
 
-	if (Performance.set)
-	{
-		printf("Time (Wall/CPU): %.2f / %.2f\n", timer.wallTime(), timer.cpuTime());
-		printf("Peak Memory (MB): %d\n", MemoryInfo::PeakMemoryUsageMB());
-	}
+		Timer timer;
+#ifdef ARRAY_DEBUG
+		WARN("Array debugging enabled");
+#endif // ARRAY_DEBUG
+		if (MaxMemoryGB.value > 0) SetPeakMemoryMB(MaxMemoryGB.value << 10);
+		ThreadPool::DefaultChunkSize = ThreadChunkSize.value;
+		ThreadPool::DefaultSchedule = (ThreadPool::ScheduleType)ScheduleType.value;
+		ThreadPool::Init((ThreadPool::ParallelType)ParallelType.value, Threads.value);
 
-	ThreadPool::Terminate();
-	return outMesh;
+		if (!BaseDepth.set) BaseDepth.value = FullDepth.value;
+		if (!SolveDepth.set) SolveDepth.value = Depth.value;
+
+		if (BaseDepth.value > FullDepth.value)
+		{
+			if (BaseDepth.set) WARN("Base depth must be smaller than full depth: ", BaseDepth.value, " <= ", FullDepth.value);
+			BaseDepth.value = FullDepth.value;
+		}
+		if (SolveDepth.value > Depth.value)
+		{
+			WARN("Solution depth cannot exceed system depth: ", SolveDepth.value, " <= ", Depth.value);
+			SolveDepth.value = Depth.value;
+		}
+		if (!KernelDepth.set) KernelDepth.value = Depth.value - 2;
+		if (KernelDepth.value > Depth.value)
+		{
+			WARN("Kernel depth should not exceed depth: ", KernelDepth.name, " <= ", KernelDepth.value);
+			KernelDepth.value = Depth.value;
+		}
+
+		if (!EnvelopeDepth.set) EnvelopeDepth.value = BaseDepth.value;
+		if (EnvelopeDepth.value > Depth.value)
+		{
+			WARN(EnvelopeDepth.name, " can't be greater than ", Depth.name, ": ", EnvelopeDepth.value, " <= ", Depth.value);
+			EnvelopeDepth.value = Depth.value;
+		}
+		if (EnvelopeDepth.value < BaseDepth.value)
+		{
+			WARN(EnvelopeDepth.name, " can't be less than ", BaseDepth.name, ": ", EnvelopeDepth.value, " >= ", BaseDepth.value);
+			EnvelopeDepth.value = BaseDepth.value;
+		}
+
+		if (!PointWeight.set) PointWeight.value = DefaultPointWeightMultiplier * Degree.value;
+
+		//执行
+		{
+			if (inCloud->colors.size() == inCloud->vertices.size())
+			{
+				Execute< DEFAULT_DIMENSION, Real >(VertexFactory::RGBColorFactory< Real >());
+			}
+			else
+			{
+				Execute< DEFAULT_DIMENSION, Real >(VertexFactory::EmptyFactory< Real >());
+			}
+		}
+
+		if (Performance.set)
+		{
+			printf("Time (Wall/CPU): %.2f / %.2f\n", timer.wallTime(), timer.cpuTime());
+			printf("Peak Memory (MB): %d\n", MemoryInfo::PeakMemoryUsageMB());
+		}
+
+		ThreadPool::Terminate();
+		std::cout << "triangulation time: " << clock() - time << std::endl;
+		return outMesh;
+	}
 }

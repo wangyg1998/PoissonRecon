@@ -1,4 +1,7 @@
 #pragma once
 #include <TriMesh.h>
 
-extern std::shared_ptr<trimesh::TriMesh> triangulation();
+namespace PoissonReconLib
+{
+	extern std::shared_ptr<trimesh::TriMesh> triangulation(std::vector<std::shared_ptr<trimesh::TriMesh>> meshList, float targetEdgeLength);
+}
