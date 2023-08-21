@@ -1117,8 +1117,27 @@ namespace PoissonReconLib
 			EnvelopeDepth.value = BaseDepth.value;
 		}
 
-		if (!PointWeight.set) PointWeight.value = DefaultPointWeightMultiplier * Degree.value;
 
+#ifdef FAST_COMPILE
+
+		static const int Degree = DEFAULT_FEM_DEGREE;
+		static const BoundaryType BType = DEFAULT_FEM_BOUNDARY;
+		typedef IsotropicUIntPack< DEFAULT_DIMENSION, FEMDegreeAndBType< Degree, BType >::Signature > FEMSigs;
+		WARN("Compiled for degree-", Degree, ", boundary-", BoundaryNames[BType], ", ", sizeof(Real) == 4 ? "single" : "double", "-precision _only_");
+		if (!PointWeight.set) PointWeight.value = DefaultPointWeightMultiplier * Degree;
+		
+		if (inCloud->colors.size() == inCloud->vertices.size())
+		{
+			Execute< Real >(FEMSigs(), VertexFactory::RGBColorFactory< Real >());
+		}
+		else
+		{
+			Execute< Real >(FEMSigs(), VertexFactory::EmptyFactory< Real >());
+		}  
+
+#else
+
+		if (!PointWeight.set) PointWeight.value = DefaultPointWeightMultiplier * Degree.value;
 		//Ö´ÐÐ
 		{
 			if (inCloud->colors.size() == inCloud->vertices.size())
@@ -1130,6 +1149,8 @@ namespace PoissonReconLib
 				Execute< DEFAULT_DIMENSION, Real >(VertexFactory::EmptyFactory< Real >());
 			}
 		}
+
+#endif
 
 		if (Performance.set)
 		{
