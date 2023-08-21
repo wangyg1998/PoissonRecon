@@ -44,6 +44,7 @@ DAMAGE.
 
 #include "DataIO.h"
 #include "PoissonReconLib.h"
+#include <TriMesh_algo.h>
 
 std::shared_ptr<trimesh::TriMesh> inCloud;//输入点云，需要法向
 std::shared_ptr<trimesh::TriMesh> outMesh;//输出网格
@@ -304,7 +305,6 @@ void ExtractMesh
 	typename VertexFactory::Transform unitCubeToModelTransform(unitCubeToModel);
 	auto xForm = [&](typename VertexFactory::VertexType& v) { unitCubeToModelTransform.inPlace(v); };
 
-
 	//输出为trimesh
 	{
 		outMesh.reset(new trimesh::TriMesh);
@@ -317,6 +317,10 @@ void ExtractMesh
 		if (hasColor)
 		{
 			outMesh->colors.reserve(nv);
+		}
+		if (Density.set)
+		{
+			outMesh->confidences.reserve(nv);
 		}
 
 		//顶点
@@ -333,6 +337,18 @@ void ExtractMesh
 				Real* ptr = (Real*)&vertex;
 				outMesh->colors.push_back(trimesh::Color(ptr[0], ptr[1], ptr[2]));
 			}
+			if (Density.set)
+			{
+				Real* ptr = (Real*)&vertex;
+				if (!hasColor)
+				{
+					outMesh->confidences.push_back(ptr[1]);
+				}
+				else
+				{
+					outMesh->confidences.push_back(ptr[3]);
+				}
+			}
 		}
 
 		//面片
@@ -341,6 +357,22 @@ void ExtractMesh
 		{
 			mesh->nextPolygon(polygon);
 			outMesh->faces.push_back(trimesh::TriMesh::Face(polygon[0], polygon[1], polygon[2]));
+		}
+
+		//根据密度裁剪
+		if (outMesh->confidences.size() == outMesh->vertices.size())
+		{
+			std::vector<bool> rmv(outMesh->vertices.size(), false);
+			for (int i = 0; i < outMesh->vertices.size(); ++i)
+			{
+				if (outMesh->confidences[i] < 8.75f)
+				{
+					rmv[i] = true;
+				}
+			}
+			outMesh->confidences.clear();
+			trimesh::remove_vertices(outMesh.get(), rmv);
+			trimesh::remove_unused_vertices(outMesh.get());
 		}
 	}
 	delete mesh;
@@ -1042,6 +1074,7 @@ namespace PoissonReconLib
 		Scale.value = (targetEdgeLength * std::pow(2.f, depth)) / boxMaxEdgeLength;
 		Depth.value = depth;
 		Out.set = true;
+		Density.set = true;
 
 		Timer timer;
 #ifdef ARRAY_DEBUG
