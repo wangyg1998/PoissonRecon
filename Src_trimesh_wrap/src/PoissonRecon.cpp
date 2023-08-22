@@ -45,9 +45,11 @@ DAMAGE.
 #include "DataIO.h"
 #include "PoissonReconLib.h"
 #include <TriMesh_algo.h>
+#include "D:\Library\Octree.hpp"
 
 std::shared_ptr<trimesh::TriMesh> inCloud;//输入点云，需要法向
 std::shared_ptr<trimesh::TriMesh> outMesh;//输出网格
+Real targetEdgeLength;
 
 enum NormalType
 {
@@ -362,18 +364,50 @@ void ExtractMesh
 		//根据密度裁剪
 		if (outMesh->confidences.size() == outMesh->vertices.size())
 		{
-			std::vector<bool> rmv(outMesh->vertices.size(), false);
-			for (int i = 0; i < outMesh->vertices.size(); ++i)
+			if (true)
 			{
-				if (outMesh->confidences[i] < 8.75f)
+				std::vector<bool> rmv(outMesh->vertices.size(), false);
+				for (int i = 0; i < outMesh->vertices.size(); ++i)
 				{
-					rmv[i] = true;
+					if (outMesh->confidences[i] < 8.2f)
+					{
+						rmv[i] = true;
+					}
 				}
+				outMesh->confidences.clear();
+				trimesh::remove_vertices(outMesh.get(), rmv);
+				trimesh::remove_unused_vertices(outMesh.get());
 			}
-			outMesh->confidences.clear();
-			trimesh::remove_vertices(outMesh.get(), rmv);
-			trimesh::remove_unused_vertices(outMesh.get());
+			else
+			{
+				clock_t time = clock();
+				unibn::Octree<trimesh::point> octree;
+				octree.initialize(inCloud->vertices);
+				std::vector<bool> rmv(outMesh->vertices.size(), false);
+				for (int i = 0; i < outMesh->vertices.size(); ++i)
+				{
+					if (outMesh->confidences[i] > 10.5f)
+					{
+						continue;
+					}
+					if (outMesh->confidences[i] < 8.2f)
+					{
+						rmv[i] = true;
+						continue;
+					}
+					int nn = octree.findNeighbor(outMesh->vertices[i]);
+					if (nn >= 0 && trimesh::dist(inCloud->vertices[nn], outMesh->vertices[i]) > targetEdgeLength)
+					{
+						outMesh->confidences[i] = -1;
+					}
+				}
+				outMesh->confidences.clear();
+				trimesh::remove_vertices(outMesh.get(), rmv);
+				trimesh::remove_unused_vertices(outMesh.get());
+				std::cout << "cut time: " << clock() - time << std::endl;
+			}
 		}
+
 	}
 	delete mesh;
 }
@@ -1034,11 +1068,12 @@ void Execute(const AuxDataFactory& auxDataFactory)
 
 namespace PoissonReconLib
 {
-	std::shared_ptr<trimesh::TriMesh> triangulation(std::vector<std::shared_ptr<trimesh::TriMesh>> meshList, float targetEdgeLength)
+	std::shared_ptr<trimesh::TriMesh> triangulation(std::vector<std::shared_ptr<trimesh::TriMesh>> meshList, float _targetEdgeLength)
 	{
 		trimesh::TriMesh::set_verbose(0);
 		clock_t time = clock();
 
+		targetEdgeLength = _targetEdgeLength;
 		//单帧数据合并
 		inCloud.reset(new trimesh::TriMesh);
 		for (int k = 0; k < meshList.size(); ++k)
@@ -1123,9 +1158,8 @@ namespace PoissonReconLib
 		static const int Degree = DEFAULT_FEM_DEGREE;
 		static const BoundaryType BType = DEFAULT_FEM_BOUNDARY;
 		typedef IsotropicUIntPack< DEFAULT_DIMENSION, FEMDegreeAndBType< Degree, BType >::Signature > FEMSigs;
-		WARN("Compiled for degree-", Degree, ", boundary-", BoundaryNames[BType], ", ", sizeof(Real) == 4 ? "single" : "double", "-precision _only_");
 		if (!PointWeight.set) PointWeight.value = DefaultPointWeightMultiplier * Degree;
-		
+
 		if (inCloud->colors.size() == inCloud->vertices.size())
 		{
 			Execute< Real >(FEMSigs(), VertexFactory::RGBColorFactory< Real >());
@@ -1133,7 +1167,7 @@ namespace PoissonReconLib
 		else
 		{
 			Execute< Real >(FEMSigs(), VertexFactory::EmptyFactory< Real >());
-		}  
+		}
 
 #else
 
