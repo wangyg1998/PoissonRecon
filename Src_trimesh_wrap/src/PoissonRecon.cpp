@@ -44,7 +44,9 @@ DAMAGE.
 
 #include "DataIO.h"
 #include "PoissonReconLib.h"
+
 #include <TriMesh_algo.h>
+
 #include "D:\Library\Octree.hpp"
 
 std::shared_ptr<trimesh::TriMesh> inCloud;//输入点云，需要法向
@@ -217,6 +219,117 @@ void ShowUsage(char* ex)
 	printf("\t[--%s]\n", Verbose.name);
 }
 
+static bool trimsOff(const trimesh::TriMesh* inCloud, trimesh::TriMesh* outMesh, float targetEdgeLength)
+{
+	clock_t time = clock();
+
+	//偏离点标记
+	std::vector<bool> farPoint(outMesh->vertices.size(), false);
+	{
+		unibn::Octree<trimesh::point> octree;
+		octree.initialize(inCloud->vertices);
+#pragma omp parallel for
+		for (int i = 0; i < outMesh->vertices.size(); ++i)
+		{
+			int vId = octree.findNeighbor(outMesh->vertices[i]);
+			if (vId >= 0 && trimesh::dist(inCloud->vertices[vId], outMesh->vertices[i]) > targetEdgeLength)
+			{
+				farPoint[i] = true;
+			}
+		}
+	}
+
+	//删除偏离区域
+	{
+		std::vector<bool> rmv(outMesh->vertices.size(), false);
+		std::vector<bool> visited(outMesh->vertices.size(), false);
+		outMesh->need_neighbors();
+		for (int i = 0; i < outMesh->vertices.size(); ++i)
+		{
+			if (visited[i] || !farPoint[i])
+			{
+				continue;
+			}
+			std::vector<int> cached = { i };
+			visited[i] = true;
+			std::pair<int, int> searchRegion(0, cached.size());
+			while (searchRegion.first < searchRegion.second)
+			{
+				for (int j = searchRegion.first; j < searchRegion.second; ++j)
+				{
+					for (int ring : outMesh->neighbors[cached[j]])
+					{
+						if (!visited[ring] && farPoint[ring])
+						{
+							visited[ring] = true;
+							cached.push_back(ring);
+						}
+					}
+				}
+				searchRegion.first = searchRegion.second;
+				searchRegion.second = cached.size();
+			}
+			if (cached.size() > 10)
+			{
+				for (int vid : cached)
+				{
+					rmv[vid] = true;
+				}
+			}
+		}
+		outMesh->neighbors.clear();
+		trimesh::remove_vertices(outMesh, rmv);
+	}
+
+	//删除小组件
+	{
+		std::vector<bool> rmv(outMesh->vertices.size(), false);
+		std::vector<bool> visited(outMesh->vertices.size(), false);
+		outMesh->need_neighbors();
+		std::vector<int> cached;
+		cached.reserve(outMesh->vertices.size());
+		for (int i = 0; i < outMesh->vertices.size(); ++i)
+		{
+			if (visited[i])
+			{
+				continue;
+			}
+			cached.clear();
+			cached.push_back(i);
+			visited[i] = true;
+			std::pair<int, int> searchRegion(0, cached.size());
+			while (searchRegion.first < searchRegion.second)
+			{
+				for (int j = searchRegion.first; j < searchRegion.second; ++j)
+				{
+					for (int ring : outMesh->neighbors[cached[j]])
+					{
+						if (!visited[ring])
+						{
+							visited[ring] = true;
+							cached.push_back(ring);
+						}
+					}
+				}
+				searchRegion.first = searchRegion.second;
+				searchRegion.second = cached.size();
+			}
+			if (cached.size() < 100)
+			{
+				for (int vid : cached)
+				{
+					rmv[vid] = true;
+				}
+			}
+		}
+		outMesh->neighbors.clear();
+		trimesh::remove_vertices(outMesh, rmv);
+	}
+
+	std::cout << "trimmer time: " << clock() - time << std::endl;
+	return true;
+}
+
 double Weight(double v, double start, double end)
 {
 	v = (v - start) / (end - start);
@@ -364,50 +477,22 @@ void ExtractMesh
 		//根据密度裁剪
 		if (outMesh->confidences.size() == outMesh->vertices.size())
 		{
-			if (true)
+			std::vector<bool> rmv(outMesh->vertices.size(), false);
+			for (int i = 0; i < outMesh->vertices.size(); ++i)
 			{
-				std::vector<bool> rmv(outMesh->vertices.size(), false);
-				for (int i = 0; i < outMesh->vertices.size(); ++i)
+				if (outMesh->confidences[i] < 8.2f)
 				{
-					if (outMesh->confidences[i] < 8.2f)
-					{
-						rmv[i] = true;
-					}
+					rmv[i] = true;
 				}
-				outMesh->confidences.clear();
-				trimesh::remove_vertices(outMesh.get(), rmv);
-				trimesh::remove_unused_vertices(outMesh.get());
 			}
-			else
-			{
-				clock_t time = clock();
-				unibn::Octree<trimesh::point> octree;
-				octree.initialize(inCloud->vertices);
-				std::vector<bool> rmv(outMesh->vertices.size(), false);
-				for (int i = 0; i < outMesh->vertices.size(); ++i)
-				{
-					if (outMesh->confidences[i] > 10.5f)
-					{
-						continue;
-					}
-					if (outMesh->confidences[i] < 8.2f)
-					{
-						rmv[i] = true;
-						continue;
-					}
-					int nn = octree.findNeighbor(outMesh->vertices[i]);
-					if (nn >= 0 && trimesh::dist(inCloud->vertices[nn], outMesh->vertices[i]) > targetEdgeLength)
-					{
-						outMesh->confidences[i] = -1;
-					}
-				}
-				outMesh->confidences.clear();
-				trimesh::remove_vertices(outMesh.get(), rmv);
-				trimesh::remove_unused_vertices(outMesh.get());
-				std::cout << "cut time: " << clock() - time << std::endl;
-			}
+			outMesh->confidences.clear();
+			trimesh::remove_vertices(outMesh.get(), rmv);
+			trimesh::remove_unused_vertices(outMesh.get());
 		}
-
+		else
+		{
+			trimsOff(inCloud.get(), outMesh.get(), targetEdgeLength);
+		}
 	}
 	delete mesh;
 }
@@ -1068,7 +1153,7 @@ void Execute(const AuxDataFactory& auxDataFactory)
 
 namespace PoissonReconLib
 {
-	std::shared_ptr<trimesh::TriMesh> triangulation(std::vector<std::shared_ptr<trimesh::TriMesh>> meshList, float _targetEdgeLength)
+	std::shared_ptr<trimesh::TriMesh> poissonRecon(std::vector<std::shared_ptr<trimesh::TriMesh>> meshList, float _targetEdgeLength, bool preciseTrimming)
 	{
 		trimesh::TriMesh::set_verbose(0);
 		clock_t time = clock();
@@ -1109,7 +1194,10 @@ namespace PoissonReconLib
 		Scale.value = (targetEdgeLength * std::pow(2.f, depth)) / boxMaxEdgeLength;
 		Depth.value = depth;
 		Out.set = true;
-		Density.set = true;
+		if (!preciseTrimming)
+		{
+			Density.set = true;
+		}
 
 		Timer timer;
 #ifdef ARRAY_DEBUG

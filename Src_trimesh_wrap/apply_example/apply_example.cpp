@@ -32,15 +32,14 @@ int main()
 	trimesh::TriMesh::set_verbose(0);
 
 	std::vector<std::string> files;
-	getAllFiles("D:\\test", files, ".ply");
+	getAllFiles("D:\\ModelData\\300data_new\\基台\\03", files, ".ply");
 	std::vector<std::shared_ptr<trimesh::TriMesh>> meshList(files.size());
 #pragma omp parallel for
 	for (int i = 0; i < meshList.size(); ++i)
 	{
 		meshList[i].reset(trimesh::TriMesh::read(files[i]));
 	}
-
-	std::shared_ptr<trimesh::TriMesh> output = PoissonReconLib::triangulation(meshList, 0.1f);
+	std::shared_ptr<trimesh::TriMesh> output = PoissonReconLib::poissonRecon(meshList, 0.09f, true);
 	output->write("D:\\output.ply");
 
 	std::cout << "time: " << clock() - time << std::endl;
