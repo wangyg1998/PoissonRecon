@@ -3,6 +3,6 @@
 
 namespace PoissonReconLib
 {
-	/// \param[in] preciseTrimming 如果为true，通过点云比较对输出网格进行精确修剪；否则，使用泊松的密度估计进行修剪
-	extern std::shared_ptr<trimesh::TriMesh> poissonRecon(std::vector<std::shared_ptr<trimesh::TriMesh>> meshList, float targetEdgeLength, bool preciseTrimming);
+	/// \param[in] preciseTrimming 濡傛灉涓簍rue锛岄�氳繃鐐逛簯姣旇緝瀵硅緭鍑虹綉鏍艰繘琛岀簿纭慨鍓紱鍚﹀垯锛屼娇鐢ㄦ硦鏉剧殑瀵嗗害浼拌杩涜淇壀
+	std::shared_ptr<trimesh::TriMesh> poissonRecon(std::vector<std::shared_ptr<trimesh::TriMesh>> meshList, float targetEdgeLength, bool preciseTrimming);
 }

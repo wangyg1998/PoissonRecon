@@ -49,8 +49,8 @@ DAMAGE.
 
 #include "D:\Library\Octree.hpp"
 
-std::shared_ptr<trimesh::TriMesh> inCloud;// ‰»Îµ„‘∆£¨–Ë“™∑®œÚ
-std::shared_ptr<trimesh::TriMesh> outMesh;// ‰≥ˆÕ¯∏Ò
+std::shared_ptr<trimesh::TriMesh> inCloud;//ËæìÂÖ•ÁÇπ‰∫ëÔºåÈúÄË¶ÅÊ≥ïÂêë
+std::shared_ptr<trimesh::TriMesh> outMesh;//ËæìÂá∫ÁΩëÊ†º
 Real targetEdgeLength;
 
 enum NormalType
@@ -223,7 +223,7 @@ static bool trimsOff(const trimesh::TriMesh* inCloud, trimesh::TriMesh* outMesh,
 {
 	clock_t time = clock();
 
-	//∆´¿Îµ„±Íº«
+	//ÂÅèÁ¶ªÁÇπÊ†áËÆ∞
 	std::vector<bool> farPoint(outMesh->vertices.size(), false);
 	{
 		unibn::Octree<trimesh::point> octree;
@@ -239,7 +239,7 @@ static bool trimsOff(const trimesh::TriMesh* inCloud, trimesh::TriMesh* outMesh,
 		}
 	}
 
-	//…æ≥˝∆´¿Î«¯”Ú
+	//Âà†Èô§ÂÅèÁ¶ªÂå∫Âüü
 	{
 		std::vector<bool> rmv(outMesh->vertices.size(), false);
 		std::vector<bool> visited(outMesh->vertices.size(), false);
@@ -281,7 +281,7 @@ static bool trimsOff(const trimesh::TriMesh* inCloud, trimesh::TriMesh* outMesh,
 		trimesh::remove_vertices(outMesh, rmv);
 	}
 
-	//…æ≥˝–°◊Èº˛
+	//Âà†Èô§Â∞èÁªÑ‰ª∂
 	{
 		std::vector<bool> rmv(outMesh->vertices.size(), false);
 		std::vector<bool> visited(outMesh->vertices.size(), false);
@@ -393,10 +393,10 @@ void ExtractMesh
 	{
 		SparseNodeData< ProjectiveData< InputSampleDataType, Real >, IsotropicUIntPack< Dim, DataSig > > _sampleData = tree.template setExtrapolatedDataField< DataSig, false >(*samples, *sampleData, (DensityEstimator*)NULL);
 		auto nodeFunctor = [&](const RegularTreeNode< Dim, FEMTreeNodeData, depth_and_offset_type >* n)
-		{
-			ProjectiveData< InputSampleDataType, Real >* clr = _sampleData(n);
-			if (clr) (*clr) *= (Real)pow(DataX.value, tree.depth(n));
-		};
+			{
+				ProjectiveData< InputSampleDataType, Real >* clr = _sampleData(n);
+				if (clr) (*clr) *= (Real)pow(DataX.value, tree.depth(n));
+			};
 		tree.tree().processNodes(nodeFunctor);
 		stats = LevelSetExtractor< Dim, Real, Vertex >::template Extract< InputSampleDataType >(Sigs(), UIntPack< WEIGHT_DEGREE >(), UIntPack< DataSig >(), tree, density, &_sampleData, solution, isoValue, *mesh, zeroInputSampleDataType, SetVertex, !LinearFit.set, Normals.value == NORMALS_GRADIENTS, !NonManifold.set, PolygonMesh.set, false);
 	}
@@ -420,7 +420,7 @@ void ExtractMesh
 	typename VertexFactory::Transform unitCubeToModelTransform(unitCubeToModel);
 	auto xForm = [&](typename VertexFactory::VertexType& v) { unitCubeToModelTransform.inPlace(v); };
 
-	// ‰≥ˆŒ™trimesh
+	//ËæìÂá∫‰∏∫trimesh
 	{
 		outMesh.reset(new trimesh::TriMesh);
 		size_t nv = mesh->vertexNum();
@@ -438,7 +438,7 @@ void ExtractMesh
 			outMesh->confidences.reserve(nv);
 		}
 
-		//∂•µ„
+		//È°∂ÁÇπ
 		const auto& vFactory = vertexFactory;
 		for (size_t i = 0; i < nv; i++)
 		{
@@ -466,7 +466,7 @@ void ExtractMesh
 			}
 		}
 
-		//√Ê∆¨
+		//Èù¢Áâá
 		std::vector< int > polygon;
 		for (size_t i = 0; i < nf; i++)
 		{
@@ -474,7 +474,7 @@ void ExtractMesh
 			outMesh->faces.push_back(trimesh::TriMesh::Face(polygon[0], polygon[1], polygon[2]));
 		}
 
-		//∏˘æ›√‹∂»≤√ºÙ
+		//Ê†πÊçÆÂØÜÂ∫¶Ë£ÅÂâ™
 		if (outMesh->confidences.size() == outMesh->vertices.size())
 		{
 			std::vector<bool> rmv(outMesh->vertices.size(), false);
@@ -710,18 +710,18 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 			auto XFormFunctor = [&](InputSampleType& p) { _modelToUnitCube.inPlace(p); };
 			XInputPointStream _pointStream(XFormFunctor, *pointStream);
 			auto ProcessDataWithConfidence = [&](const Point< Real, Dim >& p, typename InputPointStreamInfo::DataType& d)
-			{
-				Real l = (Real)Length(d.template get<0>());
-				if (!l || !std::isfinite(l)) return (Real)-1.;
-				return (Real)pow(l, Confidence.value);
-			};
+				{
+					Real l = (Real)Length(d.template get<0>());
+					if (!l || !std::isfinite(l)) return (Real)-1.;
+					return (Real)pow(l, Confidence.value);
+				};
 			auto ProcessData = [](const Point< Real, Dim >& p, typename InputPointStreamInfo::DataType& d)
-			{
-				Real l = (Real)Length(d.template get<0>());
-				if (!l || !std::isfinite(l)) return (Real)-1.;
-				d.template get<0>() /= l;
-				return (Real)1.;
-			};
+				{
+					Real l = (Real)Length(d.template get<0>());
+					if (!l || !std::isfinite(l)) return (Real)-1.;
+					d.template get<0>() /= l;
+					return (Real)1.;
+				};
 
 			typename InputSampleDataFactory::VertexType zeroData = inputSampleDataFactory();
 			typename FEMTreeInitializer< Dim, Real >::StreamInitializationData sid;
@@ -759,24 +759,24 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 			profiler.reset();
 			normalInfo = new SparseNodeData< Point< Real, Dim >, NormalSigs >();
 			std::function< bool(InputSampleDataType, Point< Real, Dim >&) > ConversionFunction = [](InputSampleDataType in, Point< Real, Dim >& out)
-			{
-				Point< Real, Dim > n = in.template get<0>();
-				Real l = (Real)Length(n);
-				// It is possible that the samples have non-zero normals but there are two co-located samples with negative normals...
-				if (!l) return false;
-				out = n / l;
-				return true;
-			};
+				{
+					Point< Real, Dim > n = in.template get<0>();
+					Real l = (Real)Length(n);
+					// It is possible that the samples have non-zero normals but there are two co-located samples with negative normals...
+					if (!l) return false;
+					out = n / l;
+					return true;
+				};
 			std::function< bool(InputSampleDataType, Point< Real, Dim >&, Real&) > ConversionAndBiasFunction = [](InputSampleDataType in, Point< Real, Dim >& out, Real& bias)
-			{
-				Point< Real, Dim > n = in.template get<0>();
-				Real l = (Real)Length(n);
-				// It is possible that the samples have non-zero normals but there are two co-located samples with negative normals...
-				if (!l) return false;
-				out = n / l;
-				bias = (Real)(log(l) * ConfidenceBias.value / log(1 << (Dim - 1)));
-				return true;
-			};
+				{
+					Point< Real, Dim > n = in.template get<0>();
+					Real l = (Real)Length(n);
+					// It is possible that the samples have non-zero normals but there are two co-located samples with negative normals...
+					if (!l) return false;
+					out = n / l;
+					bias = (Real)(log(l) * ConfidenceBias.value / log(1 << (Dim - 1)));
+					return true;
+				};
 			if (ConfidenceBias.value > 0) *normalInfo = tree.setInterpolatedDataField(NormalSigs(), *samples, *sampleData, density, BaseDepth.value, Depth.value, (Real)LowDepthCutOff.value, pointDepthAndWeight, ConversionAndBiasFunction);
 			else                         *normalInfo = tree.setInterpolatedDataField(NormalSigs(), *samples, *sampleData, density, BaseDepth.value, Depth.value, (Real)LowDepthCutOff.value, pointDepthAndWeight, ConversionFunction);
 			ThreadPool::Parallel_for(0, normalInfo->size(), [&](unsigned int, size_t i) { (*normalInfo)[i] *= (Real)-1.; });
@@ -819,19 +819,19 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 				{
 					// What to do if we find a node in the support of the vector field
 					auto SetScratchFlag = [&](FEMTreeNode* node)
-					{
-						if (node)
 						{
-							while (node->depth() > BaseDepth.value) node = node->parent;
-							node->nodeData.setScratchFlag(true);
-						}
-					};
+							if (node)
+							{
+								while (node->depth() > BaseDepth.value) node = node->parent;
+								node->nodeData.setScratchFlag(true);
+							}
+						};
 
 					std::function< void(FEMTreeNode*) > PropagateToLeaves = [&](const FEMTreeNode* node)
-					{
-						geometryNodeDesignators[node] = GeometryNodeType::INTERIOR;
-						if (node->children) for (int c = 0; c < (1 << Dim); c++) PropagateToLeaves(node->children + c);
-					};
+						{
+							geometryNodeDesignators[node] = GeometryNodeType::INTERIOR;
+							if (node->children) for (int c = 0; c < (1 << Dim); c++) PropagateToLeaves(node->children + c);
+						};
 
 					// Flags indicating if a node contains a non-zero vector field coefficient
 					std::vector< bool > isVectorFieldElement(tree.nodeCount(), false);
@@ -839,10 +839,10 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 					// Get the set of base nodes
 					std::vector< FEMTreeNode* > baseNodes;
 					auto nodeFunctor = [&](FEMTreeNode* node)
-					{
-						if (node->depth() == BaseDepth.value) baseNodes.push_back(node);
-						return node->depth() < BaseDepth.value;
-					};
+						{
+							if (node->depth() == BaseDepth.value) baseNodes.push_back(node);
+							return node->depth() < BaseDepth.value;
+						};
 					tree.spaceRoot().processNodes(nodeFunctor);
 
 					std::vector< node_index_type > vectorFieldElementCounts(baseNodes.size());
@@ -852,10 +852,10 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 					ThreadPool::Parallel_for(0, baseNodes.size(), [&](unsigned int t, size_t  i)
 						{
 							auto nodeFunctor = [&](FEMTreeNode* node)
-							{
-								Point< Real, Dim >* n = (*normalInfo)(node);
-								if (n && Point< Real, Dim >::SquareNorm(*n)) isVectorFieldElement[node->nodeData.nodeIndex] = true, vectorFieldElementCounts[i]++;
-							};
+								{
+									Point< Real, Dim >* n = (*normalInfo)(node);
+									if (n && Point< Real, Dim >::SquareNorm(*n)) isVectorFieldElement[node->nodeData.nodeIndex] = true, vectorFieldElementCounts[i]++;
+								};
 							baseNodes[i]->processNodes(nodeFunctor);
 						});
 					size_t vectorFieldElementCount = 0;
@@ -870,10 +870,10 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 						ThreadPool::Parallel_for(0, baseNodes.size(), [&](unsigned int t, size_t  i)
 							{
 								auto nodeFunctor = [&](FEMTreeNode* node)
-								{
-									if (isVectorFieldElement[node->nodeData.nodeIndex]) _vectorFieldElements[i].push_back(node);
-									node->nodeData.setScratchFlag(false);
-								};
+									{
+										if (isVectorFieldElement[node->nodeData.nodeIndex]) _vectorFieldElements[i].push_back(node);
+										node->nodeData.setScratchFlag(false);
+									};
 								baseNodes[i]->processNodes(nodeFunctor);
 							});
 						for (int i = 0; i < _vectorFieldElements.size(); i++) vectorFieldElements.insert(vectorFieldElements.end(), _vectorFieldElements[i].begin(), _vectorFieldElements[i].end());
@@ -924,33 +924,33 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 				FEMTreeInitializer< Dim, Real >::PullGeometryNodeDesignatorsFromFiner(&tree.spaceRoot(), geometryNodeDesignators);
 
 				auto WriteEnvelopeGrid = [&](bool showFinest)
-				{
-					int res = 0;
-					DenseNodeData< Real, IsotropicUIntPack< Dim, FEMTrivialSignature > > coefficients = tree.initDenseNodeData(IsotropicUIntPack< Dim, FEMTrivialSignature >());
-					auto nodeFunctor = [&](const FEMTreeNode* n)
 					{
-						if (n->nodeData.nodeIndex != -1 && ((showFinest && !n->children) || (!showFinest && geometryNodeDesignators[n->parent] == GeometryNodeType::BOUNDARY)))
-						{
+						int res = 0;
+						DenseNodeData< Real, IsotropicUIntPack< Dim, FEMTrivialSignature > > coefficients = tree.initDenseNodeData(IsotropicUIntPack< Dim, FEMTrivialSignature >());
+						auto nodeFunctor = [&](const FEMTreeNode* n)
+							{
+								if (n->nodeData.nodeIndex != -1 && ((showFinest && !n->children) || (!showFinest && geometryNodeDesignators[n->parent] == GeometryNodeType::BOUNDARY)))
+								{
 #if 0 // Randomize the colors
-							auto Value = [](double v, double eps) { return (Real)(v + Random< double >() * 2. * eps - eps); };
-							// Show the octree structure
-							if (geometryNodeDesignators[n] == GeometryNodeType::INTERIOR) coefficients[n] = Value(0.75, 0.25);
-							else if (geometryNodeDesignators[n] == GeometryNodeType::EXTERIOR) coefficients[n] = Value(-0.75, 0.25);
+									auto Value = [](double v, double eps) { return (Real)(v + Random< double >() * 2. * eps - eps); };
+									// Show the octree structure
+									if (geometryNodeDesignators[n] == GeometryNodeType::INTERIOR) coefficients[n] = Value(0.75, 0.25);
+									else if (geometryNodeDesignators[n] == GeometryNodeType::EXTERIOR) coefficients[n] = Value(-0.75, 0.25);
 
 #else
-							if (geometryNodeDesignators[n] == GeometryNodeType::INTERIOR) coefficients[n] = (Real)1.;
-							else if (geometryNodeDesignators[n] == GeometryNodeType::EXTERIOR) coefficients[n] = (Real)-1.;
+									if (geometryNodeDesignators[n] == GeometryNodeType::INTERIOR) coefficients[n] = (Real)1.;
+									else if (geometryNodeDesignators[n] == GeometryNodeType::EXTERIOR) coefficients[n] = (Real)-1.;
 #endif
-						}
-					};
-					tree.spaceRoot().processNodes(nodeFunctor);
-					Pointer(Real) values = tree.template regularGridEvaluate< true >(coefficients, res, -1, false);
-					XForm< Real, Dim + 1 > voxelToUnitCube = XForm< Real, Dim + 1 >::Identity();
-					for (int d = 0; d < Dim; d++) voxelToUnitCube(d, d) = (Real)(1. / res), voxelToUnitCube(Dim, d) = (Real)(0.5 / res);
+								}
+							};
+						tree.spaceRoot().processNodes(nodeFunctor);
+						Pointer(Real) values = tree.template regularGridEvaluate< true >(coefficients, res, -1, false);
+						XForm< Real, Dim + 1 > voxelToUnitCube = XForm< Real, Dim + 1 >::Identity();
+						for (int d = 0; d < Dim; d++) voxelToUnitCube(d, d) = (Real)(1. / res), voxelToUnitCube(Dim, d) = (Real)(0.5 / res);
 
-					WriteGrid< Real, DEFAULT_DIMENSION >(EnvelopeGrid.value, values, res, unitCubeToModel * voxelToUnitCube, Verbose.set);
-					DeletePointer(values);
-				};
+						WriteGrid< Real, DEFAULT_DIMENSION >(EnvelopeGrid.value, values, res, unitCubeToModel * voxelToUnitCube, Verbose.set);
+						DeletePointer(values);
+					};
 
 				WriteEnvelopeGrid(true);
 			}
@@ -1041,10 +1041,10 @@ void Execute(UIntPack< FEMSigs ... >, const AuxDataFactory& auxDataFactory)
 		{
 			SparseNodeData< ProjectiveData< InputSampleDataType, Real >, IsotropicUIntPack< Dim, DataSig > > _sampleData = tree.template setExtrapolatedDataField< DataSig, false >(*samples, *sampleData, (DensityEstimator*)NULL);
 			auto nodeFunctor = [&](const RegularTreeNode< Dim, FEMTreeNodeData, depth_and_offset_type >* n)
-			{
-				ProjectiveData< InputSampleDataType, Real >* clr = _sampleData(n);
-				if (clr) (*clr) *= (Real)pow(DataX.value, tree.depth(n));
-			};
+				{
+					ProjectiveData< InputSampleDataType, Real >* clr = _sampleData(n);
+					if (clr) (*clr) *= (Real)pow(DataX.value, tree.depth(n));
+				};
 			tree.tree().processNodes(nodeFunctor);
 			_sampleData.write(fs);
 		}
@@ -1159,7 +1159,7 @@ namespace PoissonReconLib
 		clock_t time = clock();
 
 		targetEdgeLength = _targetEdgeLength;
-		//µ•÷° ˝æ›∫œ≤¢
+		//ÂçïÂ∏ßÊï∞ÊçÆÂêàÂπ∂
 		inCloud.reset(new trimesh::TriMesh);
 		for (int k = 0; k < meshList.size(); ++k)
 		{
@@ -1174,7 +1174,7 @@ namespace PoissonReconLib
 			inCloud->colors.clear();
 		}
 
-		//µ˜’˚∞¸Œß∫–±»¿˝
+		//Ë∞ÉÊï¥ÂåÖÂõ¥ÁõíÊØî‰æã
 		trimesh::point minPt(FLT_MAX), maxPt(-FLT_MAX);
 		for (int i = 0; i < inCloud->vertices.size(); ++i)
 		{
@@ -1260,7 +1260,7 @@ namespace PoissonReconLib
 #else
 
 		if (!PointWeight.set) PointWeight.value = DefaultPointWeightMultiplier * Degree.value;
-		//÷¥––
+		//ÊâßË°å
 		{
 			if (inCloud->colors.size() == inCloud->vertices.size())
 			{

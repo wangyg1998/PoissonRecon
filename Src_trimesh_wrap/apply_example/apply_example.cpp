@@ -32,7 +32,7 @@ int main()
 	trimesh::TriMesh::set_verbose(0);
 
 	std::vector<std::string> files;
-	getAllFiles("D:\\ModelData\\300data_new\\基台\\03", files, ".ply");
+	getAllFiles("D:\\test", files, ".ply");
 	std::vector<std::shared_ptr<trimesh::TriMesh>> meshList(files.size());
 #pragma omp parallel for
 	for (int i = 0; i < meshList.size(); ++i)

@@ -46,7 +46,7 @@ public:
 			ptr[0] = mesh_->colors[currentIndex_][0];
 			ptr[1] = mesh_->colors[currentIndex_][1];
 			ptr[2] = mesh_->colors[currentIndex_][2];
-			
+
 		}
 
 		currentIndex_ += 1;
