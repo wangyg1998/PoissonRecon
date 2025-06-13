@@ -3,7 +3,9 @@
 #include <TriMesh.h>
 #include <PoissonReconLib.h>
 
-static void getAllFiles(std::string path, std::vector<std::string>& files, std::string fileType)
+namespace
+{
+void getAllFiles(std::string path, std::vector<std::string>& files, std::string fileType)
 {
 	// 文件句柄
 	intptr_t hFile = 0;
@@ -25,6 +27,7 @@ static void getAllFiles(std::string path, std::vector<std::string>& files, std::
 	}
 }
 
+} // namespace
 
 int main()
 {
